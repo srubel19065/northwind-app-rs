@@ -1,0 +1,86 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Job1: CI Testing') {
+            steps {
+                script {
+                    // Clone the repository and checkout the dev branch
+                    git branch: 'dev', url: 'https://github.com/developedbyluke/tech257-northwind-app.git'
+
+                    // Perform CI Testing
+                    dir('app') {
+                        // Install pytest
+                        sh 'python3 -m pip install pytest'
+
+                        // Run the test script
+                        sh 'python3 tests/test_northwind_app.py'
+                    }
+                }
+            }
+            post {
+                success {
+                    // Trigger Job2 after successful CI Testing
+                    build job: 'Job2_Merge_Branch_to_Main'
+                }
+            }
+        }
+        
+        stage('Job2: Merge the branch to the main') {
+            steps {
+                script {
+                    // Clone the repository and checkout the dev branch
+                    git branch: 'dev', url: 'https://github.com/developedbyluke/tech257-northwind-app.git'
+
+                    // Merge dev branch into main
+                    checkout([
+                        $class: 'GitSCM', 
+                        branches: [[name: '*/main']], 
+                        userRemoteConfigs: [[url: 'https://github.com/developedbyluke/tech257-northwind-app.git']]
+                    ])
+                    
+                    sh 'git config user.email "rubelsubhan12@gmail.com"'
+                    sh 'git config user.name "srubel19065"'
+                    sh 'git merge dev'
+                    sh 'git push origin main'
+                }
+            }
+            post {
+                success {
+                    // Trigger Job3 after successful merge
+                    build job: 'Job3_Continuous_Deployment'
+                }
+            }
+        }
+
+        stage('Job3: Continuous Deployment') {
+            steps {
+                script {
+                    // Clone the repository and checkout the main branch
+                    git branch: 'main', url: 'https://github.com/developedbyluke/tech257-northwind-app.git'
+
+                    // Copy the app and scripts folder from Jenkins workspace into the instance
+                    sh '''
+                    rsync -avz -e "ssh -o StrictHostKeyChecking=no" app ubuntu@34.245.159.132:/home/ubuntu/
+                    rsync -avz -e "ssh -o StrictHostKeyChecking=no" scripts ubuntu@34.245.159.132:/home/ubuntu/
+
+                    # SSH into the instance and run the deployment script
+                    ssh -o "StrictHostKeyChecking=no" ubuntu@34.245.159.132 <<EOF
+                        cd /home/ubuntu/scripts
+                        chmod +x app.sh
+                        lsof -t -i :5000 | xargs kill
+                        ./app.sh
+                    EOF
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Cleanup actions
+            echo 'Pipeline finished.'
+        }
+    }
+}

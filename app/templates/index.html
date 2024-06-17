@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Northwind Home Page</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+            /* Or your desired shade */
+        }
+
+        h1 {
+            margin-bottom: 0;
+        }
+
+        .change {
+            display: block;
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 1em 0;
+            text-transform: uppercase;
+        }
+
+        .btn {
+            background-color: black;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            border-radius: 999px;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid black;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="../static/sparta_logo.png" alt="SPARTA!" height="100" />
+    <h1>Northwind Home Page</h1>
+    <span class="change">This change was made with CI/CD using
+        Jenkins!</span>
+    <a href="/all_customers" class="btn">List all customers</a>
+    <a href="../static/add_customer_form.html" class="btn btn-secondary">Add a new customer</a>
+</body>
+
+</html>
