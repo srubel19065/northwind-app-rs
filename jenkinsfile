@@ -6,7 +6,7 @@ pipeline {
             steps {
                 script {
                     // Clone the repository and checkout the dev branch
-                    git branch: 'dev', url: 'https://github.com/developedbyluke/tech257-northwind-app.git'
+                    git branch: 'dev', url: 'https://github.com/srubel19065/northwind-app-rs.git'
 
                     // Perform CI Testing
                     dir('app') {
@@ -30,13 +30,13 @@ pipeline {
             steps {
                 script {
                     // Clone the repository and checkout the dev branch
-                    git branch: 'dev', url: 'https://github.com/developedbyluke/tech257-northwind-app.git'
+                    git branch: 'dev', url: 'https://github.com/srubel19065/northwind-app-rs.git'
 
                     // Merge dev branch into main
                     checkout([
                         $class: 'GitSCM', 
                         branches: [[name: '*/main']], 
-                        userRemoteConfigs: [[url: 'https://github.com/developedbyluke/tech257-northwind-app.git']]
+                        userRemoteConfigs: [[url: 'https://github.com/srubel19065/northwind-app-rs.git']]
                     ])
                     
                     sh 'git config user.email "rubelsubhan12@gmail.com"'
@@ -57,15 +57,15 @@ pipeline {
             steps {
                 script {
                     // Clone the repository and checkout the main branch
-                    git branch: 'main', url: 'https://github.com/developedbyluke/tech257-northwind-app.git'
+                    git branch: 'main', url: 'https://github.com/srubel19065/northwind-app-rs.git'
 
                     // Copy the app and scripts folder from Jenkins workspace into the instance
                     sh '''
-                    rsync -avz -e "ssh -o StrictHostKeyChecking=no" app ubuntu@34.245.159.132:/home/ubuntu/
-                    rsync -avz -e "ssh -o StrictHostKeyChecking=no" scripts ubuntu@34.245.159.132:/home/ubuntu/
+                    rsync -avz -e "ssh -o StrictHostKeyChecking=no" app ubuntu@54.84.204.7:/home/ubuntu/
+                    rsync -avz -e "ssh -o StrictHostKeyChecking=no" scripts ubuntu@54.84.204.7:/home/ubuntu/
 
                     # SSH into the instance and run the deployment script
-                    ssh -o "StrictHostKeyChecking=no" ubuntu@34.245.159.132 <<EOF
+                    ssh -o "StrictHostKeyChecking=no" ubuntu@54.84.204.7 <<EOF
                         cd /home/ubuntu/scripts
                         chmod +x app.sh
                         lsof -t -i :5000 | xargs kill
